@@ -1,0 +1,631 @@
+basePath: /api
+definitions:
+  entities.User:
+    properties:
+      avatar_url:
+        example: https://example.com/avatar.jpg
+        type: string
+      created_at:
+        example: "2025-12-03T10:15:30Z"
+        type: string
+      email:
+        example: user@example.com
+        type: string
+      hashed_password:
+        example: $2a$12$abc...
+        type: string
+      id:
+        example: 1
+        type: integer
+      last_seen:
+        example: "2025-12-03T12:00:00Z"
+        type: string
+      name:
+        example: Иван Иванов
+        type: string
+      whiteboards:
+        description: связь многие-ко-многим
+        items:
+          $ref: '#/definitions/entities.Whiteboard'
+        type: array
+    type: object
+  entities.Whiteboard:
+    properties:
+      ID:
+        example: 1
+        type: integer
+      created_at:
+        example: "2025-12-03T10:15:30Z"
+        type: string
+      created_by:
+        description: FK на User.ID
+        example: 1
+        type: integer
+      creator:
+        $ref: '#/definitions/entities.User'
+      elements:
+        items:
+          $ref: '#/definitions/entities.WhiteboardElement'
+        type: array
+      title:
+        example: Проект 1
+        type: string
+      users:
+        description: связь многие-ко-многим
+        items:
+          $ref: '#/definitions/entities.User'
+        type: array
+    type: object
+  entities.WhiteboardElement:
+    properties:
+      data:
+        description: хранится как JSON
+      id:
+        example: 1
+        type: integer
+      type:
+        allOf:
+        - $ref: '#/definitions/enums.BoardElementType'
+        description: '"text", "shape", "path"'
+        example: text
+      whiteboard_id:
+        example: 1
+        type: integer
+    type: object
+  enums.BoardElementType:
+    enum:
+    - text
+    - shape
+    - path
+    type: string
+    x-enum-varnames:
+    - TextType
+    - ShapeType
+    - PathType
+  handlers.ResultError:
+    properties:
+      response:
+        properties:
+          code:
+            description: '[RULE]: must be one of codes from table (Check DEV.PAGE)'
+            type: integer
+          message:
+            type: string
+        type: object
+      status:
+        description: error
+        type: string
+    type: object
+  models.AuthRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  models.AuthResponse:
+    properties:
+      token:
+        type: string
+      user_id:
+        type: integer
+      username:
+        type: string
+    type: object
+  models.CreateWhiteboardRequest:
+    properties:
+      elements:
+        items:
+          $ref: '#/definitions/models.WhiteboardElement'
+        type: array
+      title:
+        example: Проект 1
+        type: string
+      users:
+        description: привязка пользователей
+        example:
+        - 1
+        - 2
+        - 3
+        items:
+          type: integer
+        type: array
+    required:
+    - title
+    type: object
+  models.GetAllUsersResponse:
+    properties:
+      total:
+        example: 42
+        type: integer
+      whiteboards:
+        items:
+          $ref: '#/definitions/entities.User'
+        type: array
+    type: object
+  models.GetAllWhiteboardsResponse:
+    properties:
+      total:
+        example: 42
+        type: integer
+      whiteboards:
+        items:
+          $ref: '#/definitions/entities.Whiteboard'
+        type: array
+    type: object
+  models.RegisterRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - email
+    - password
+    - username
+    type: object
+  models.RegisterResponse:
+    properties:
+      token:
+        type: string
+      user_id:
+        type: integer
+    type: object
+  models.UpdateUserRequest:
+    properties:
+      avatar_url:
+        example: https://example.com/avatar.jpg
+        type: string
+      email:
+        example: user@example.com
+        type: string
+      username:
+        example: Иван Иванов
+        type: string
+    type: object
+  models.UpdateWhiteboardRequest:
+    properties:
+      elements:
+        items:
+          $ref: '#/definitions/entities.WhiteboardElement'
+        type: array
+      title:
+        example: Новая доска
+        type: string
+      users:
+        description: обновление списка пользователей
+        example:
+        - 1
+        - 2
+        - 3
+        items:
+          type: integer
+        type: array
+    type: object
+  models.WhiteboardElement:
+    properties:
+      data: {}
+      type:
+        allOf:
+        - $ref: '#/definitions/enums.BoardElementType'
+        description: '"text", "shape", "path"'
+        example: text
+      whiteboard_id:
+        example: 1
+        type: integer
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Back-Server для MKADD
+  title: MKADD_API
+  version: 1.0.0
+paths:
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: Принимает логин и пароль, проверяет пользователя и выдаёт JWT-токен
+      parameters:
+      - description: Данные для авторизации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.AuthResponse'
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "401":
+          description: Неверные логин или пароль
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      summary: Авторизация пользователя
+      tags:
+      - Authorize
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Создаёт учётную запись, хэширует пароль
+      parameters:
+      - description: Данные для регистрации
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.RegisterResponse'
+        "400":
+          description: Некорректный запрос
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      summary: Регистрация нового пользователя
+      tags:
+      - Authorize
+  /users:
+    get:
+      parameters:
+      - default: 10
+        description: Лимит
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.GetAllUsersResponse'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Получить всех пользователей
+      tags:
+      - User
+  /users/{id}:
+    delete:
+      description: Удалить инфу может только сам пользователь. Из бд не удаляется
+        полностью.
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.User'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "403":
+          description: Доступ запрещен
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "404":
+          description: Пользователь не найден
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Удалить пользователя
+      tags:
+      - User
+    get:
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.User'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "404":
+          description: Пользователь не найден
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Получить пользователя по ID
+      tags:
+      - User
+    put:
+      consumes:
+      - application/json
+      description: Обновить инфу может только сам пользователь
+      parameters:
+      - description: ID пользователя
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Данные для обновления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.User'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "403":
+          description: Доступ запрещен
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "404":
+          description: Пользователь не найден
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Обновить пользователя
+      tags:
+      - User
+  /whiteboards:
+    get:
+      parameters:
+      - default: 10
+        description: Лимит
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Смещение
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - {}
+            - properties:
+                data:
+                  $ref: '#/definitions/models.GetAllWhiteboardsResponse'
+              type: object
+        "500":
+          description: Internal Server Error
+          schema: {}
+      security:
+      - BearerAuth: []
+      summary: Получить все whiteboards
+      tags:
+      - Whiteboard
+    post:
+      consumes:
+      - application/json
+      description: Создаёт чистую whiteboard. Админ доски - создатель.
+      parameters:
+      - description: Данные для создания whiteboard
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.CreateWhiteboardRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Whiteboard'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "404":
+          description: Пользователь не найден
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Создать новую whiteboard
+      tags:
+      - Whiteboard
+  /whiteboards/{id}:
+    delete:
+      parameters:
+      - description: ID Whiteboard
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Whiteboard'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "403":
+          description: Доступ запрещен
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "404":
+          description: Доска не найдена
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Удалить whiteboard
+      tags:
+      - Whiteboard
+    get:
+      description: Доступно только для участников доски.
+      parameters:
+      - description: ID Whiteboard
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Whiteboard'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "403":
+          description: Доступ запрещен
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "404":
+          description: Доска не найдена
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Получить whiteboard по ID
+      tags:
+      - Whiteboard
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: ID Whiteboard
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Поля для обновления
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/models.UpdateWhiteboardRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/entities.Whiteboard'
+        "401":
+          description: Не авторизован
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "403":
+          description: Доступ запрещен
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "404":
+          description: Доска не найдена
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+        "500":
+          description: Внутренняя ошибка сервера
+          schema:
+            $ref: '#/definitions/handlers.ResultError'
+      security:
+      - BearerAuth: []
+      summary: Обновить whiteboard
+      tags:
+      - Whiteboard
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
+tags:
+- description: 'Авторизация.<br>Токен передавать заголовком: `Authorization`.<br>Формат
+    ввода токена: `Bearer {token}`'
+  name: Authorize
