@@ -69,10 +69,59 @@
 
 ## 4. Наблюдаемость и тестирование  
 Мемов про Prometheus и Grafana у меня, к сожалению, нет
+
 # Дополнительно
+
+## Развертывание на localhost
 ![localhost Meme](./assets/localhost.jpg)
 
 Если хотите увидеть процесс сборки и пуша, откройте Issue, я получу письмо и запущу процесс вручную на локальном сервере
+
+## Исходные репозитории
+Исходный код со всеми ветками и коммитами представлен в частных репозиториях [Tummix/LifeCickle_Back](https://github.com/Tummix/LifeCickle_Back) и [Tummix/LifeCickle_Front](https://github.com/Tummix/LifeCickle_Front). 
+<details>
+<summary>🔍 Нажмите, чтобы раскрыть подробности (необязательно к прочтению)</summary>
+
+Здесь может быть любой контент:  
+- списки,  
+- код,  
+- изображения,  
+- даже цитаты.
+
+```go
+fmt.Println("Это пример кода внутри сворачиваемого блока")
+
+В качестве альтернативы мною здесь представлены 
+```
+* 205b503 (HEAD -> main, origin/main, origin/HEAD) qwe
+* 7e121be fix board context
+*   f0e76bf Merge pull request #4 from Tummix/misha
+|\  
+| * 55e1c76 (origin/misha) v0.6
+| *   3534114 Merge pull request #3 from Tummix/main
+| |\  
+| |/  
+|/|   
+* | 1f985c2 api auth
+* | a36f0a1 misha: remove generated files
+|/  
+* 16159d6 v0.51
+* cb63ef1 v0.5 Fixed menu whiboard
+* cac5dd3 v0.4 (whiteboard_test)
+* ef0824f v0.4
+* deff21f menu
+* a9e833c repo
+* 0616d07 work
+*   d9400bf Merge pull request #1 from Tummix/misha
+|\  
+| * 4baacd0 Update README.md
+| * 09c09cc v0.2beta
+| * c81beaf registartion form
+|/  
+* e66cd8c tytyt
+* d4c8f01 Initial commit
+
+```
 
 # Авторы: 
 - [Alena Kharlova](https://github.com/Khrllw) (главная по бэку)
