@@ -82,7 +82,7 @@
 
 <details>
   
-<summary>Ветки и коммиты в репозиториях (посредством `git log --oneline --graph --all --decorate` ) </summary>
+<summary>Ветки и коммиты в репозиториях</summary>
 
 ### LifeCickle_Back:
 
