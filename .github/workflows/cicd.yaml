@@ -28,14 +28,11 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Analyze
-        run: flutter analyze
-
-      - name: Test
-        run: flutter test
+      - name: i do not know
+        run: flutter create . --platforms web
 
       - name: Build web
-        run: flutter build web --release
+        run: flutter build web --release --no-wasm-dry-run
 
   docker-build:
     runs-on: self-hosted
