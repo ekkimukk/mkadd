@@ -75,8 +75,8 @@
 Если хотите увидеть процесс сборки и пуша, откройте Issue, я получу письмо и запущу процесс вручную на локальном сервере
 
 # Авторы: 
-- Alena Kharlova (главная по бэку) <https://github.com/Khrllw>
-- Danila Danenko (DevSecFinAIOps данного проекта ) <https://github.com/ekkimukk>
-- Dmitriy Lutsenko (фронтенд) <https://github.com/LendorD>
-- Michail Tumin (генеральный директор) <https://github.com/Tummix>
-- Konstantin Khaidarshin (просто лучший друг гендира) <https://github.com/MENGERSPONGEKNGLTYN>
+- [Alena Kharlova](https://github.com/Khrllw) (главная по бэку)
+- [Danila Danenko](https://github.com/ekkimukk) (DevSecFinAIOps данного проекта)
+- [Dmitry Lutsenko](https://github.com/LendorD) (фронтенд)
+- [Mikhail Tumin](https://github.com/Tummix) (генеральный директор)
+- [Konstantin Khaidarshin](https://github.com/MENGERSPONGEKNGLTYN) (просто лучший друг гендира)
