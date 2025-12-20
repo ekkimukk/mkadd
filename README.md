@@ -78,15 +78,59 @@
 Если хотите увидеть процесс сборки и пуша, откройте Issue, я получу письмо и запущу процесс вручную на локальном сервере
 
 ## Исходные репозитории
-Исходный код со всеми ветками и коммитами представлен в частных репозиториях [Tummix/LifeCickle_Back](https://github.com/Tummix/LifeCickle_Back) и [Tummix/LifeCickle_Front](https://github.com/Tummix/LifeCickle_Front). 
+Исходный код со всеми ветками и коммитами представлен в частных репозиториях [Tummix/LifeCickle_Back](https://github.com/Tummix/LifeCickle_Back) и [Tummix/LifeCickle_Front](https://github.com/Tummix/LifeCickle_Front)
+
 <details>
+  
+<summary>Ветки и коммиты в репозиториях (посредством `git log --oneline --graph --all --decorate` ) </summary>
 
-<summary>В качестве альтернативы мною здесь представлены ветки и коммиты в данных репозиториях посредством вывода `git log --oneline --graph --all --decorate`</summary>
-
-  ```go
-fmt.Println("Это пример кода внутри сворачиваемого блока")
+### LifeCickle_Back:
 
 ```
+$ git log --oneline --graph --all --decorate 
+
+* 9417223 (HEAD -> main, origin/main, origin/HEAD) fix ws
+* b9a29b5 fix
+* 4112483 Update CI to build and test specific main.go file
+*   55d8ed5 Merge branch 'Alyona' into main
+|\  
+| * cee22ca (origin/Alyona) :)))
+* |   ee8150e Merge pull request #2 from Tummix/ekkimukk-patch-1
+|\ \  
+| * | 558fedc (origin/ekkimukk-patch-1) Update Go version in CI workflow to 1.24.6
+| * | 3745cdc add CI workflow for Go
+|/ /  
+* | 5e066b4 changes Jenkinsfile
+* | 3ebeb5c the change in main.go for jenkins test
+* | 94d1dd3 adds Jenkinsfile
+* | ffc25c5 коммит перед интеграцией jenkins
+* | b4b857d Merge pull request #1 from Tummix/Alyona
+|\| 
+| * 3f37a5d added: errors
+|/  
+* f597019 test board CRUD
+* d82d7fc migrations fixed
+* f37ffc2 fix: minor fixes
+* 24795e7 Broken migrations
+*   9e6c74d Merge remote-tracking branch 'origin/main'
+|\  
+| * abb18f4 feat: изменено имя модуля
+* | 45194f9 Broken migrations
+|/  
+* 5d4d355 ws + repo started
+* 4b06d82 Update README.md
+* 03a8b18 init
+* 315db45 entities
+* 051d8b5 (origin/misha) Update README.md
+* 91df391 feat: initial commit with working whiteboard and toolbar
+* 501ae23 Initial commit
+```
+  
+### LifeCickle_Front:
+  
+```
+$ git log --oneline --graph --all --decorate
+
 * 205b503 (HEAD -> main, origin/main, origin/HEAD) qwe
 * 7e121be fix board context
 *   f0e76bf Merge pull request #4 from Tummix/misha
@@ -115,7 +159,7 @@ fmt.Println("Это пример кода внутри сворачиваемо�
 * e66cd8c tytyt
 * d4c8f01 Initial commit
 ```
-```
+</details>
 
 # Авторы: 
 - [Alena Kharlova](https://github.com/Khrllw) (главная по бэку)
