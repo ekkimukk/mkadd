@@ -8,10 +8,10 @@
 ╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═════╝ 
 ```
 **MKADD** - это аббревиату́ра от *Миша*, *Костя*, *Алёна*, *Даня*, *Дима*. Альтернативным вариантом был **Paint 2**.
-### Что делает это приложение? 
-# <Тут GIF не забыть вставить> 
+# Что делает это приложение? 
+## <Тут GIF не забыть вставить> 
 
-### Требования к выполнению работы  
+# Требования к выполнению работы  
 - Для хранения кода используется Git (GitHub)
 - Наличиствует два сервиса (backend и frontend)
 - Используется PostgreSQL
@@ -20,8 +20,9 @@
 - Kubernetes забыт
 - Про Helm charts и Terraform тут тоже не слышали
 - Секреты хранятся посредством GitHub Secrets
-### Этапы выполнения работы
-#### 1. Описание репозитория  
+
+# Этапы выполнения работы
+## 1. Описание репозитория  
 - Проект состоит из двух сервисов: бэкенда на Go и фронтенда на Flutter.
 - Репозиторий имеет следующую структуру:
 ```
@@ -48,36 +49,34 @@
 ```
 - Вся база данных PostgreSQL описана в `./internal/adapters/repositories/*.go`. Мне очень не хочется здесь рисовать её схему, спасибо за понимание.
 
-#### 2. CI: сборка и проверка  
+## 2. CI: сборка и проверка  
 - Ни линтеров, ни unit-тестов не вставляли  
 - Интеграционные тесты тоже не запускаем
 - Про security scan (SAST, SCA) я даже не слышал, если честно  
 - Docker-образы собираются и загружаются в реестр GitHub
 - Запрещать пуш при критических уязвимостях мне представляется высшим пилотажем, поэтому я этого не добавял  
 
-#### 3. CD: развёртывание в Kubernetes  
+## 3. CD: развёртывание в Kubernetes  
 ![Kubernetes Meme](./assets/kube.jpg)
+
 Всё работает на Docker Compose и с божьей помощью.
 
-\(
 - Никаких helm-чартов для сервисов
 - Никакой стратегии canary или blue-green
 - Readiness/Liveness probes не настроены
 - Автоматического rollback при ошибках не происходит
 - Миграций БД нет  
 
-\)
-
-#### 4. Наблюдаемость и тестирование  
+## 4. Наблюдаемость и тестирование  
 Мемов про Prometheus и Grafana у меня, к сожалению, нет
-### Дополнительно
+# Дополнительно
 ![localhost Meme](./assets/localhost.jpg)
+
 Если хотите увидеть процесс сборки и пуша, откройте Issue, я получу письмо и запущу процесс вручную на локальном сервере
 
-### Авторы: 
-Alena Kharlova (главная по бэку) <https://github.com/Khrllw>
-Danila Danenko (DevSecFinAIOps данного проекта ) <https://github.com/ekkimukk>
-Dmitriy Lutsenko (фронтенд) <https://github.com/LendorD>
-Michail Tumin (генеральный директор) <https://github.com/Tummix>
-Konstantin Khaidarshin (а он просто лучший друг гендира) <https://github.com/MENGERSPONGEKNGLTYN>
-
+# Авторы: 
+- Alena Kharlova (главная по бэку) <https://github.com/Khrllw>
+- Danila Danenko (DevSecFinAIOps данного проекта ) <https://github.com/ekkimukk>
+- Dmitriy Lutsenko (фронтенд) <https://github.com/LendorD>
+- Michail Tumin (генеральный директор) <https://github.com/Tummix>
+- Konstantin Khaidarshin (просто лучший друг гендира) <https://github.com/MENGERSPONGEKNGLTYN>
