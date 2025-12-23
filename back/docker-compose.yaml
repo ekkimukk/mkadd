@@ -1,44 +1,56 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  db-postgres:
-    container_name: db-medpulse
-    image: postgres:13-alpine
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: med_db
-    healthcheck:
-      test: ["CMD", "pg_isready", "-q", "-d", "med_db", "-U", "postgres"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    ports:
-      - "5455:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - mobileapp_med_pulse_medservice-net
-    restart: unless-stopped
-
-  go-api:
-    container_name: api-medPulse
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      db-postgres:
-        condition: service_healthy
     ports:
-      - "65323:${APP_PORT:-8080}"  # Используем значение из .env или по умолчанию 8080
-    env_file:
-      - .env
+      - "${APP_PORT}:8080"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - GIN_MODE=${GIN_MODE}
+      - KAFKA_BROKER=${KAFKA_BROKER}
+      - KAFKA_TOPIC=${KAFKA_TOPIC}
+      - LOGGER_ENABLE=${LOGGER_ENABLE}
+      - LOGGER_LOGS_DIR=/app/logs
+      - LOGGER_LOG_LEVEL=${LOGGER_LOG_LEVEL}
+      - LOGGER_SAVING_DAYS=${LOGGER_SAVING_DAYS}
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      db:
+        condition: service_healthy
     networks:
-      - mobileapp_med_pulse_medservice-net
-    restart: unless-stopped
+      - app-network
+
+  db:
+    image: postgres:15-alpine
+    container_name: medapp-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 2s
+      timeout: 10s
+      retries: 15
+    networks:
+      - app-network
 
 volumes:
-  postgres_data:
+  pgdata:
 
 networks:
-  mobileapp_med_pulse_medservice-net:
+  app-network:
+    driver: bridge

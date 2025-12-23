@@ -1,29 +1,20 @@
-# 1. Используем официальный образ Go
 FROM golang:1.24-alpine AS builder
 
-# 2. Устанавливаем нужные пакеты
-RUN apk update && apk add --no-cache ca-certificates git openssh
-
-# 3. Рабочая директория
+RUN apk update && apk add --no-cache ca-certificates git tzdata
 WORKDIR /app
-
-# # 4. Копируем go.mod и go.sum отдельно для кеша зависимостей
-# COPY go.mod go.sum ./
-# RUN --mount=type=cache,target=/go/pkg/mod \
-#     go mod download
-
-# 5. Копируем всё остальное
 COPY . .
-
-# 6. Сборка приложения
 RUN go build -o app ./cmd/app/main.go
 
-# 7. Разрешаем запуск
-RUN chmod +x app
+FROM alpine:3.18
+RUN apk add --no-cache ca-certificates tzdata && \
+    mkdir -p /app/logs && \
+    addgroup -g 1000 app && \
+    adduser -u 1000 -G app -s /bin/sh -D app
 
-# 9. Порт (если нужно для отладки)
+WORKDIR /app
+COPY --from=builder /app/app .
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+
+USER app
 EXPOSE 8080
-
-# 10. Старт приложения
 ENTRYPOINT ["./app"]
-

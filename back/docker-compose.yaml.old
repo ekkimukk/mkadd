@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+  # db-postgres:
+  #   container_name: db-medpulse
+  #   image: postgres:13-alpine
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: postgres
+  #     POSTGRES_DB: med_db
+  #   healthcheck:
+  #     test: ["CMD", "pg_isready", "-q", "-d", "med_db", "-U", "postgres"]
+  #     interval: 5s
+  #     timeout: 5s
+  #     retries: 5
+  #   ports:
+  #     - "5455:5432"
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - mobileapp_med_pulse_medservice-net
+  #   restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: medapp-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  go-api:
+    container_name: api-medPulse
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      db-postgres:
+        condition: service_healthy
+    ports:
+      - "65323:${APP_PORT:-8080}" # Используем значение из .env или по умолчанию 8080
+    env_file:
+      - .env
+    networks:
+      - mobileapp_med_pulse_medservice-net
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  mobileapp_med_pulse_medservice-net:
